@@ -1,0 +1,180 @@
+// SmartWaste Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model CollectionPoint {
+  id            Int                  @id @default(autoincrement())
+  name          String
+  operatorId    String
+  operator      Operator             @relation(fields: [operatorId], references: [userId], onDelete: Cascade)
+  address       Address?
+  description   String
+  wasteTypes    WasteType[]
+  schedule      CollectionSchedule?
+  images        Json?
+  reports       Report[]
+  isActive      Boolean              @default(true)
+  accessibility String?
+  capacity      String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model Address {
+  id                Int             @id @default(autoincrement())
+  street            String
+  number            String?
+  city              String
+  zip               String
+  country           String          @default("Italy")
+  latitude          Float
+  longitude         Float
+  collectionPointId Int             @unique
+  collectionPoint   CollectionPoint @relation(fields: [collectionPointId], references: [id], onDelete: Cascade)
+}
+
+model WasteType {
+  id               Int               @id @default(autoincrement())
+  name             String            @unique
+  description      String
+  color            String
+  iconName         String?
+  disposalInfo     String            @default("")
+  examples         String?
+  collectionPoints CollectionPoint[]
+}
+
+model CollectionSchedule {
+  id                Int             @id @default(autoincrement())
+  collectionPointId Int             @unique
+  collectionPoint   CollectionPoint @relation(fields: [collectionPointId], references: [id], onDelete: Cascade)
+  monday            Boolean         @default(false)
+  tuesday           Boolean         @default(false)
+  wednesday         Boolean         @default(false)
+  thursday          Boolean         @default(false)
+  friday            Boolean         @default(false)
+  saturday          Boolean         @default(false)
+  sunday            Boolean         @default(false)
+  openingTime       String?
+  closingTime       String?
+  notes             String?
+  isAlwaysOpen      Boolean         @default(false)
+}
+
+model Report {
+  id                Int             @id @default(autoincrement())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id])
+  collectionPointId Int
+  collectionPoint   CollectionPoint @relation(fields: [collectionPointId], references: [id], onDelete: Cascade)
+  type              ReportType
+  description       String
+  status            ReportStatus    @default(PENDING)
+  images            Json?
+  createdAt         DateTime        @default(now())
+  resolvedAt        DateTime?
+  resolvedBy        String?
+  resolutionNotes   String?
+}
+
+enum ReportType {
+  FULL_BIN
+  DAMAGED
+  MISSING
+  ILLEGAL_DUMP
+  NEEDS_CLEANING
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+model User {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  role             Role
+  password         String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  oauthProvider    OAuthProvider
+  oauthId          String?
+  createdAt        DateTime      @default(now())
+  name             String
+  surname          String?
+  cellphone        String?
+  reports          Report[]
+  operator         Operator?
+  accounts         Account[]
+  sessions         Session[]
+}
+
+model Operator {
+  userId           String            @id
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationName String
+  vatNumber        String?
+  telephone        String
+  website          String?
+  collectionPoints CollectionPoint[]
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  OPERATOR
+  ADMIN
+}
+
+enum OAuthProvider {
+  GOOGLE
+  GITHUB
+  APP
+}
