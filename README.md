@@ -27,17 +27,6 @@ SmartWaste è un'applicazione web e mobile che aiuta i cittadini a localizzare i
 - ✏️ **Aggiornamenti Real-time**: Modifica orari e disponibilità
 - 📈 **Statistiche**: Analizza l'utilizzo del servizio
 
-## 🎨 Codifica Colori Standard
-
-Il sistema utilizza i colori standard della raccolta differenziata italiana:
-
-- 🟦 **Carta/Cartone**: Blu (#0066CC)
-- 🟨 **Plastica/Metalli**: Giallo (#FFD700)
-- 🟩 **Vetro**: Verde (#228B22)
-- 🟫 **Organico**: Marrone (#8B4513)
-- ⬜ **Indifferenziato**: Grigio (#808080)
-- ⚪ **Metalli**: Argento (#C0C0C0)
-
 ## 🛠️ Stack Tecnologico
 
 ### Frontend
