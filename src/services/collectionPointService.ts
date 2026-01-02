@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * Service layer for CollectionPoint business logic
@@ -63,7 +64,7 @@ export interface UpdateCollectionPointData {
  * Get all collection points with optional filters
  */
 export async function getCollectionPoints(filters?: CollectionPointFilters) {
-  const where: any = {
+  const where: Prisma.CollectionPointWhereInput = {
     isActive: true,
   };
 

@@ -47,6 +47,8 @@ export async function updateUserProfile(email: string, data: UpdateUserProfileDa
     select: {
       id: true,
       name: true,
+      surname: true,
+      cellphone: true,
       email: true,
       role: true,
       createdAt: true,
