@@ -75,6 +75,20 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             );
         }
 
+        // Verify that the collection point exists and belongs to the user
+        const collectionPoint = await prisma.collectionPoint.findUnique({
+            where: { id: spaceId },
+            select: { operatorId: true }
+        });
+
+        if (!collectionPoint) {
+            return NextResponse.json({ error: 'Collection point not found' }, { status: 404 });
+        }
+
+        if (collectionPoint.operatorId !== session.user.id) {
+            return NextResponse.json({ error: 'Not authorized to update this resource' }, { status: 403 });
+        }
+
         const formData = await request.formData();
 
         // Handle images
@@ -199,8 +213,22 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
+        // Verify that the collection point exists and belongs to the user
+        const collectionPoint = await prisma.collectionPoint.findUnique({
+            where: { id: spaceId },
+            select: { operatorId: true }
+        });
+
+        if (!collectionPoint) {
+            return NextResponse.json({ error: 'Collection point not found' }, { status: 404 });
+        }
+
+        if (collectionPoint.operatorId !== session.user.id) {
+            return NextResponse.json({ error: 'Not authorized to delete this resource' }, { status: 403 });
+        }
+
         // Delete the collectionPoint from the database
-        const deletedSpace = await prisma.collectionPoint.delete({
+        await prisma.collectionPoint.delete({
             where: { id: spaceId },
         });
 
@@ -213,7 +241,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             console.error('Failed to delete folder:', fsError);
         }
 
-        return NextResponse.json(deletedSpace);
+        return new NextResponse(null, { status: 204 });
     } catch (error) {
         return NextResponse.json({ error: 'Delete failed' + error }, { status: 500 });
     }

@@ -30,15 +30,29 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
+        // Verify that the review exists and belongs to the user
+        const review = await prisma.review.findUnique({
+            where: { id: reviewId },
+            select: { userId: true, spaceId: true }
+        });
+
+        if (!review) {
+            return NextResponse.json({ error: 'Review not found' }, { status: 404 });
+        }
+
+        if (review.userId !== session.user.id) {
+            return NextResponse.json({ error: 'Not authorized to delete this review' }, { status: 403 });
+        }
+
         // Delete the review
-        const review = await prisma.review.delete({
+        await prisma.review.delete({
             where: { id: reviewId },
         });
 
         // Update the average rating of the associated collectionPoint
         await updateSpaceAvgRating(review.spaceId);
 
-        return NextResponse.json(review);
+        return new NextResponse(null, { status: 204 });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete review' }, { status: 500 });
     }
