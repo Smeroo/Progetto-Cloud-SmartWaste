@@ -1,7 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { updateSpaceAvgRating } from '@/lib/reviewUtils';
+import { deleteReview } from '@/services/reviewService';
 
 // Handles DELETE requests to /api/reviews/[id]
 // Deletes a review
@@ -30,16 +29,17 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
-        // Delete the review
-        const review = await prisma.review.delete({
-            where: { id: reviewId },
-        });
-
-        // Update the average rating of the associated collectionPoint
-        await updateSpaceAvgRating(review.spaceId);
-
-        return NextResponse.json(review);
+        await deleteReview(reviewId, session.user.id);
+        return new NextResponse(null, { status: 204 });
     } catch (error) {
+        if (error instanceof Error) {
+            if (error.message === 'Review not found') {
+                return NextResponse.json({ error: error.message }, { status: 404 });
+            }
+            if (error.message === 'Not authorized to delete this review') {
+                return NextResponse.json({ error: error.message }, { status: 403 });
+            }
+        }
         return NextResponse.json({ error: 'Failed to delete review' }, { status: 500 });
     }
 }

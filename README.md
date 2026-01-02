@@ -52,39 +52,6 @@ SmartWaste è un'applicazione web e mobile che aiuta i cittadini a localizzare i
 - **Service Worker** - Funzionalità offline
 - **Capacitor** - Build native iOS/Android
 
-## 🚀 Quick Start
-
-### Prerequisiti
-- Node.js 18+
-- npm o yarn
-
-### Installazione
-
-```bash
-# Clona il repository
-git clone https://github.com/Smeroo/SmartWaste.git
-cd SmartWaste
-
-# Installa le dipendenze
-npm install
-
-# Configura le variabili ambiente
-cp .env.example .env
-# Modifica .env con le tue credenziali
-
-# Setup database
-npx prisma generate
-npx prisma migrate dev
-
-# Popola con dati di esempio
-npx prisma db seed
-
-# Avvia in sviluppo
-npm run dev
-```
-
-Apri [http://localhost:3000](http://localhost:3000) 🎉
-
 ## 📁 Struttura del Progetto
 
 ```
