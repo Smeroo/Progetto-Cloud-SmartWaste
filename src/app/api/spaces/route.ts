@@ -72,8 +72,6 @@ export async function GET(request: NextRequest) {
             select: {
                 id: true,
                 name: true,
-                price: true,
-                avgRating: true,
                 address: {
                     select: {
                         city: true,
@@ -81,13 +79,6 @@ export async function GET(request: NextRequest) {
                     }
                 },
                 images: true,
-                typology: true,
-                services: {
-                    select: {
-                        id: true,
-                        detail: true,
-                    }
-                },
             }
         });
 
@@ -116,7 +107,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
         }
 
-        if (session.user.role !== 'AGENCY') {
+        if (session.user.role !== 'OPERATOR') {
             return NextResponse.json({ error: "User not authorized" }, { status: 403 });
         }
 
@@ -135,11 +126,6 @@ export async function POST(request: Request) {
             data: {
                 name: metadata.name,
                 description: metadata.description,
-                seats: parseInt(metadata.seats),
-                isFullSpaceBooking: metadata.typology === 'MEETING_ROOMS' ? true : false,
-                typology: metadata.typology,
-                price: parseFloat(metadata.price),
-                avgRating: null,
                 address: {
                     create: {
                         street: nominatimAddress.address.road || '',
@@ -151,12 +137,6 @@ export async function POST(request: Request) {
                         longitude: parseFloat(nominatimAddress.lon) || 0,
                     }
                 },
-                // Connect existing services by their IDs, only if provided
-                services: metadata.services && metadata.services.length > 0
-                    ? {
-                        connect: metadata.services.map((serviceId: string) => ({ id: parseInt(serviceId) })),
-                    }
-                    : undefined,
                 operator: {
                     connect: {
                         userId: metadata.userId,

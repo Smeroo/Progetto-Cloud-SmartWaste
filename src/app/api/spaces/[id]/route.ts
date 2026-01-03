@@ -59,7 +59,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
         }
 
-        if (session.user.role !== 'AGENCY') {
+        if (session.user.role !== 'OPERATOR') {
             return NextResponse.json({ error: "User not authorized" }, { status: 403 });
         }
 
@@ -197,7 +197,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
         }
 
-        if (session.user.role !== 'AGENCY') {
+        if (session.user.role !== 'OPERATOR') {
             return NextResponse.json({ error: "User not authorized" }, { status: 403 });
         }
 
