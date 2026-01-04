@@ -70,6 +70,59 @@ async function main() {
 
   console.log("✅ Operatore creato");
 
+  // Crea admin demo
+  const adminUser = await prisma.user.create({
+    data: {
+      name: "Admin",
+      surname: "SmartWaste",
+      email: "admin@smartwaste.demo",
+      password: await bcrypt.hash("Demo123!", 10),
+      role: "ADMIN",
+      oauthProvider: "APP",
+      cellphone: "+39 06 9999999",
+    },
+  });
+
+  console.log("✅ Admin demo creato");
+
+  // Crea utente demo
+  const demoUser = await prisma.user.create({
+    data: {
+      name: "User",
+      surname: "Demo",
+      email: "user@smartwaste.demo",
+      password: await bcrypt.hash("Demo123!", 10),
+      role: "USER",
+      oauthProvider: "APP",
+      cellphone: "+39 333 0000000",
+    },
+  });
+
+  // Crea operatore demo
+  const demoOperatorUser = await prisma.user.create({
+    data: {
+      name: "Operator",
+      surname: "Demo",
+      email: "operator@smartwaste.demo",
+      password: await bcrypt.hash("Demo123!", 10),
+      role: "OPERATOR",
+      oauthProvider: "APP",
+      cellphone: "+39 06 8888888",
+    },
+  });
+
+  await prisma.operator.create({
+    data: {
+      userId: demoOperatorUser.id,
+      organizationName: "Demo Waste Management",
+      vatNumber: "IT00000000000",
+      telephone: "+39 06 8888888",
+      website: "https://demo.smartwaste.it",
+    },
+  });
+
+  console.log("✅ Account demo creati (admin, user, operator)");
+
   // Crea tipi di rifiuto
   const wasteTypes = await Promise.all([
     prisma.wasteType.create({
@@ -319,6 +372,10 @@ async function main() {
   console.log("👤 User 1: mario.rossi@example.com / Password123!");
   console.log("👤 User 2: giulia.verdi@example.com / Password123!");
   console.log("👨‍💼 Operator: operatore@smartwaste.it / Password123!");
+  console.log("\n🎯 Account DEMO per testing:");
+  console.log("👑 Admin: admin@smartwaste.demo / Demo123!");
+  console.log("👤 User: user@smartwaste.demo / Demo123!");
+  console.log("👨‍💼 Operator: operator@smartwaste.demo / Demo123!");
 }
 
 main()
