@@ -64,7 +64,7 @@ fi
 # Step 2: Generate AUTH_SECRET if not set
 echo ""
 print_info "Step 2: Generating secure AUTH_SECRET..."
-if grep -q "REPLACE_WITH_openssl\|your-secret-key-here\|REPLACE_ME\|YOUR_SECRET_HERE" .env 2>/dev/null; then
+if grep -qE "REPLACE_WITH.*openssl|GENERATE_WITH.*openssl|your-secret-key-here|REPLACE_ME|YOUR_SECRET_HERE" .env 2>/dev/null; then
     # Generate a secure random secret
     AUTH_SECRET=$(openssl rand -base64 32)
     
@@ -93,7 +93,7 @@ fi
 # Step 3: Generate PostgreSQL password if not set
 echo ""
 print_info "Step 3: Generating PostgreSQL password..."
-if grep -q "REPLACE_WITH_STRONG_PASSWORD\|CHANGE_THIS_PASSWORD\|REPLACE_ME\|YOUR_PASSWORD_HERE" .env 2>/dev/null; then
+if grep -qE "REPLACE_WITH.*PASSWORD|CHANGE_THIS_PASSWORD|REPLACE_ME|YOUR_PASSWORD_HERE" .env 2>/dev/null; then
     POSTGRES_PASSWORD=$(openssl rand -base64 16)
     
     if [[ "$OSTYPE" == "darwin"* ]]; then
