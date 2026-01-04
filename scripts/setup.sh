@@ -64,19 +64,25 @@ fi
 # Step 2: Generate AUTH_SECRET if not set
 echo ""
 print_info "Step 2: Generating secure AUTH_SECRET..."
-if grep -q "GENERATE_WITH_openssl" .env 2>/dev/null || grep -q "your-secret-key-here" .env 2>/dev/null; then
+if grep -q "REPLACE_WITH_openssl\|your-secret-key-here\|REPLACE_ME\|YOUR_SECRET_HERE" .env 2>/dev/null; then
     # Generate a secure random secret
     AUTH_SECRET=$(openssl rand -base64 32)
     
     # Update .env file
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
+        sed -i '' "s|REPLACE_WITH_openssl_rand_base64_32|$AUTH_SECRET|g" .env
         sed -i '' "s|GENERATE_WITH_openssl_rand_base64_32|$AUTH_SECRET|g" .env
         sed -i '' "s|your-secret-key-here|$AUTH_SECRET|g" .env
+        sed -i '' "s|REPLACE_ME|$AUTH_SECRET|g" .env
+        sed -i '' "s|YOUR_SECRET_HERE|$AUTH_SECRET|g" .env
     else
         # Linux
+        sed -i "s|REPLACE_WITH_openssl_rand_base64_32|$AUTH_SECRET|g" .env
         sed -i "s|GENERATE_WITH_openssl_rand_base64_32|$AUTH_SECRET|g" .env
         sed -i "s|your-secret-key-here|$AUTH_SECRET|g" .env
+        sed -i "s|REPLACE_ME|$AUTH_SECRET|g" .env
+        sed -i "s|YOUR_SECRET_HERE|$AUTH_SECRET|g" .env
     fi
     
     print_success "Generated and set AUTH_SECRET"
@@ -87,13 +93,19 @@ fi
 # Step 3: Generate PostgreSQL password if not set
 echo ""
 print_info "Step 3: Generating PostgreSQL password..."
-if grep -q "CHANGE_THIS_PASSWORD" .env 2>/dev/null; then
+if grep -q "REPLACE_WITH_STRONG_PASSWORD\|CHANGE_THIS_PASSWORD\|REPLACE_ME\|YOUR_PASSWORD_HERE" .env 2>/dev/null; then
     POSTGRES_PASSWORD=$(openssl rand -base64 16)
     
     if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s|REPLACE_WITH_STRONG_PASSWORD|$POSTGRES_PASSWORD|g" .env
         sed -i '' "s|CHANGE_THIS_PASSWORD|$POSTGRES_PASSWORD|g" .env
+        sed -i '' "s|REPLACE_ME|$POSTGRES_PASSWORD|g" .env
+        sed -i '' "s|YOUR_PASSWORD_HERE|$POSTGRES_PASSWORD|g" .env
     else
+        sed -i "s|REPLACE_WITH_STRONG_PASSWORD|$POSTGRES_PASSWORD|g" .env
         sed -i "s|CHANGE_THIS_PASSWORD|$POSTGRES_PASSWORD|g" .env
+        sed -i "s|REPLACE_ME|$POSTGRES_PASSWORD|g" .env
+        sed -i "s|YOUR_PASSWORD_HERE|$POSTGRES_PASSWORD|g" .env
     fi
     
     print_success "Generated and set POSTGRES_PASSWORD"

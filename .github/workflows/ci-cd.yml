@@ -79,7 +79,6 @@ jobs:
 
       - name: 🔍 Run ESLint
         run: npm run lint
-        continue-on-error: true
 
       - name: 📝 TypeScript type check
         run: npx tsc --noEmit
@@ -110,8 +109,17 @@ jobs:
           cache: 'npm'
 
       - name: 🔒 Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+        run: |
+          npm audit --audit-level=high || echo "⚠️  Vulnerabilities found - review required"
+          npm audit --audit-level=high --json > audit-report.json || true
+
+      - name: 📤 Upload audit report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-report
+          path: audit-report.json
+          retention-days: 30
 
       - name: 🔍 Check for secrets
         uses: trufflesecurity/trufflehog@main

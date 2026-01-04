@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    // Check database connection
-    await prisma.$queryRaw`SELECT 1`;
+    // Check database connection with a simple count query
+    await prisma.user.findFirst();
     
     return NextResponse.json({
       status: 'healthy',
