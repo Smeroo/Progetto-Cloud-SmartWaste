@@ -49,7 +49,13 @@ print_success "File .env trovato"
 echo ""
 
 # Load .env file
-export $(grep -v '^#' .env | xargs)
+# Using set -a to safely export variables
+set -a
+if [ -f .env ]; then
+    # Source the file safely, ignoring comments
+    source <(grep -v '^#' .env | grep -v '^\s*$')
+fi
+set +a
 
 # Track validation status
 VALIDATION_FAILED=0
@@ -75,15 +81,24 @@ else
 fi
 
 # 2. AUTH_SECRET
+# Weak patterns to check against
+WEAK_PATTERNS=("REPLACE" "CHANGE" "YOUR_" "please-generate" "secret-key")
+
 if [ -z "$AUTH_SECRET" ]; then
     print_error "AUTH_SECRET non configurata"
     echo "  Genera con: openssl rand -base64 32"
     VALIDATION_FAILED=1
 else
     # Check if it's not a weak/placeholder secret
-    if [[ "$AUTH_SECRET" == *"REPLACE"* ]] || [[ "$AUTH_SECRET" == *"CHANGE"* ]] || \
-       [[ "$AUTH_SECRET" == *"YOUR_"* ]] || [[ "$AUTH_SECRET" == *"please-generate"* ]] || \
-       [[ "$AUTH_SECRET" == *"secret-key"* ]] || [ ${#AUTH_SECRET} -lt 32 ]; then
+    IS_WEAK=0
+    for pattern in "${WEAK_PATTERNS[@]}"; do
+        if [[ "$AUTH_SECRET" == *"$pattern"* ]]; then
+            IS_WEAK=1
+            break
+        fi
+    done
+    
+    if [ $IS_WEAK -eq 1 ] || [ ${#AUTH_SECRET} -lt 32 ]; then
         print_error "AUTH_SECRET è debole o è un placeholder"
         echo "  Genera una chiave sicura con: openssl rand -base64 32"
         VALIDATION_FAILED=1
@@ -93,15 +108,24 @@ else
 fi
 
 # 3. POSTGRES_PASSWORD
+# Weak password patterns
+WEAK_PASSWORD_PATTERNS=("REPLACE" "CHANGE" "YOUR_" "password" "smartwaste")
+
 if [ -z "$POSTGRES_PASSWORD" ]; then
     print_error "POSTGRES_PASSWORD non configurata"
     echo "  Genera con: openssl rand -base64 16"
     VALIDATION_FAILED=1
 else
     # Check if it's not a weak/placeholder password
-    if [[ "$POSTGRES_PASSWORD" == *"REPLACE"* ]] || [[ "$POSTGRES_PASSWORD" == *"CHANGE"* ]] || \
-       [[ "$POSTGRES_PASSWORD" == *"YOUR_"* ]] || [[ "$POSTGRES_PASSWORD" == *"password"* ]] || \
-       [[ "$POSTGRES_PASSWORD" == *"smartwaste"* ]] || [ ${#POSTGRES_PASSWORD} -lt 12 ]; then
+    IS_WEAK=0
+    for pattern in "${WEAK_PASSWORD_PATTERNS[@]}"; do
+        if [[ "$POSTGRES_PASSWORD" == *"$pattern"* ]]; then
+            IS_WEAK=1
+            break
+        fi
+    done
+    
+    if [ $IS_WEAK -eq 1 ] || [ ${#POSTGRES_PASSWORD} -lt 12 ]; then
         print_error "POSTGRES_PASSWORD è debole o è un placeholder"
         echo "  Genera una password sicura con: openssl rand -base64 16"
         VALIDATION_FAILED=1
