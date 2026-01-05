@@ -113,6 +113,19 @@ else
     print_info "POSTGRES_PASSWORD already configured"
 fi
 
+# Step 3.5: Validate configuration
+echo ""
+print_info "Step 3.5: Validating configuration..."
+if [ -x ./scripts/validate-env.sh ]; then
+    ./scripts/validate-env.sh
+    if [ $? -ne 0 ]; then
+        print_error "Configuration validation failed"
+        exit 1
+    fi
+else
+    print_warning "Validation script not found or not executable"
+fi
+
 # Step 4: Build Docker images
 echo ""
 print_info "Step 4: Building Docker images..."
