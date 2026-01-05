@@ -6,6 +6,8 @@ This document outlines the deployment strategy for SmartWaste, including CI/CD p
 
 ## CI/CD Pipeline Flow
 
+> **💡 Visualizzazione Diagramma:** [cicd-pipeline.svg](./images/cicd-pipeline.svg)
+
 ```mermaid
 graph LR
     Dev[👨‍💻 Developer] -->|git push| GitHub[📦 GitHub Repository]
@@ -40,6 +42,8 @@ Triggers:
 
 ### 2. Build Stage
 
+> **💡 Visualizzazione Diagramma:** [cicd-build-stage.svg](./images/cicd-build-stage.svg)
+
 ```mermaid
 graph TD
     A[Checkout Code] --> B[Setup Node.js 20]
@@ -70,6 +74,8 @@ graph TD
 
 ### 3. Test Stage
 
+> **💡 Visualizzazione Diagramma:** [cicd-test-stage.svg](./images/cicd-test-stage.svg)
+
 ```mermaid
 graph TD
     A[Run ESLint] --> B{Linting Passed?}
@@ -97,6 +103,8 @@ graph TD
 - **Integration Tests:** API endpoint tests
 
 ### 4. Security Stage
+
+> **💡 Visualizzazione Diagramma:** [cicd-security-stage.svg](./images/cicd-security-stage.svg)
 
 ```mermaid
 graph TD
@@ -206,6 +214,8 @@ Access: GitHub Token (automatic in Actions)
 
 ### 1. Local Development Environment
 
+> **💡 Visualizzazione Diagramma:** [deployment-local.svg](./images/deployment-local.svg)
+
 ```mermaid
 graph TD
     Dev[Developer Laptop] --> Docker[Docker Desktop]
@@ -266,6 +276,8 @@ graph LR
 ### 3. Production Environment
 
 #### Option A: AWS Deployment
+
+> **💡 Visualizzazione Diagramma:** [deployment-aws.svg](./images/deployment-aws.svg)
 
 ```mermaid
 graph TB
@@ -329,6 +341,8 @@ aws ecs create-cluster --cluster-name smartwaste-cluster
 
 #### Option B: Azure Deployment
 
+> **💡 Visualizzazione Diagramma:** [deployment-azure.svg](./images/deployment-azure.svg)
+
 ```mermaid
 graph TB
     Traffic[Azure Traffic Manager] --> AppService[Azure App Service<br/>Container]
@@ -374,6 +388,8 @@ az webapp create \
 ```
 
 #### Option C: Railway Deployment (Easiest)
+
+> **💡 Visualizzazione Diagramma:** [deployment-railway.svg](./images/deployment-railway.svg)
 
 ```mermaid
 graph LR

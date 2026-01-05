@@ -102,6 +102,12 @@ SmartWaste segue i [12-Factor App principles](https://12factor.net/) per applica
 
 ## 🚀 Quick Start - Build da Zero
 
+> **⚠️ IMPORTANTE - CONFIGURAZIONE OBBLIGATORIA**  
+> **Il file `.env` con secrets sicuri è OBBLIGATORIO per avviare l'applicazione.**  
+> I valori di fallback sono stati rimossi per motivi di sicurezza. Se non configuri correttamente le variabili d'ambiente, il deployment fallirà immediatamente.
+> 
+> **Non saltare la configurazione!** Segui il setup automatico o manuale per generare secrets sicuri.
+
 ### Prerequisiti
 
 - **Docker** >= 24.0 ([Installa Docker](https://docs.docker.com/get-docker/))
@@ -111,6 +117,8 @@ SmartWaste segue i [12-Factor App principles](https://12factor.net/) per applica
 - **10GB spazio disco** libero
 
 ### Setup Automatico (Raccomandato)
+
+> **📌 Nota Importante:** Lo script `setup.sh` genera automaticamente secrets sicuri per te. È il modo più semplice e sicuro per iniziare.
 
 ```bash
 # 1. Clone repository
@@ -126,15 +134,18 @@ open http://localhost:3000
 
 Lo script `setup.sh` esegue automaticamente:
 - ✅ Copia `.env.production.example` → `.env`
-- ✅ Genera `AUTH_SECRET` sicuro con OpenSSL
-- ✅ Genera password PostgreSQL
+- ✅ Genera `AUTH_SECRET` sicuro con OpenSSL (32 bytes)
+- ✅ Genera password PostgreSQL sicura (16 bytes)
 - ✅ Build immagini Docker
 - ✅ Avvio containers (PostgreSQL + Next.js)
 - ✅ Run database migrations
 - ✅ Seed database con dati demo
 - ✅ Health check applicazione
+- ✅ Validazione completa della configurazione
 
 ### Setup Manuale
+
+> **⚠️ ATTENZIONE:** Il setup manuale richiede che tu generi manualmente secrets sicuri. **NON usare valori deboli o placeholder!**
 
 Se preferisci controllare ogni step:
 
@@ -146,36 +157,94 @@ cd Progetto-Cloud-SmartWaste
 # 2. Copia file di configurazione
 cp .env.production.example .env
 
-# 3. Genera AUTH_SECRET sicuro
+# 3. Genera AUTH_SECRET sicuro (OBBLIGATORIO!)
 openssl rand -base64 32
 # Copia l'output e sostituiscilo in .env alla voce AUTH_SECRET
 
-# 4. (Opzionale) Configura OAuth providers
+# 4. Genera POSTGRES_PASSWORD sicura (OBBLIGATORIA!)
+openssl rand -base64 16
+# Copia l'output e sostituiscilo in .env alla voce POSTGRES_PASSWORD
+
+# 5. Valida la configurazione (IMPORTANTE!)
+./scripts/validate-env.sh
+# Questo script verifica che tutti i secrets siano configurati correttamente
+
+# 6. (Opzionale) Configura OAuth providers
 # Edita .env e aggiungi AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, etc.
 
-# 5. Build Docker images
+# 7. Build Docker images
 docker-compose build
 
-# 6. Avvia containers
+# 8. Avvia containers
 docker-compose up -d
 
-# 7. Attendi che il database sia pronto
+# 9. Attendi che il database sia pronto
 docker-compose logs -f database
 # Premi CTRL+C quando vedi "database system is ready to accept connections"
 
-# 8. Run migrations
+# 10. Run migrations
 docker-compose exec frontend npx prisma migrate deploy
 
-# 9. Seed database
+# 11. Seed database
 docker-compose exec frontend npx prisma db seed
 
-# 10. Verifica che tutto funzioni
+# 12. Verifica che tutto funzioni
 curl http://localhost:3000/api/health
 # Output atteso: {"status":"healthy","database":"connected"}
 
-# 11. Apri browser
+# 13. Apri browser
 open http://localhost:3000
 ```
+
+### ⚠️ Problemi Comuni durante il Setup
+
+**Errore: "POSTGRES_PASSWORD is required"**
+- **Causa:** Il file `.env` non contiene una password valida per PostgreSQL
+- **Soluzione:** 
+  ```bash
+  openssl rand -base64 16
+  # Copia il risultato e aggiornalo in .env come POSTGRES_PASSWORD
+  ```
+
+**Errore: "AUTH_SECRET is required"**
+- **Causa:** Il file `.env` non contiene un secret valido per Auth.js
+- **Soluzione:**
+  ```bash
+  openssl rand -base64 32
+  # Copia il risultato e aggiornalo in .env come AUTH_SECRET
+  ```
+
+**Lo script validate-env.sh fallisce**
+- **Causa:** Secrets deboli o placeholder ancora presenti
+- **Soluzione:** Usa sempre `openssl rand -base64` per generare secrets forti
+- **NON usare mai:** password generiche, "change_me", "secret-key", ecc.
+
+### 🔒 Generazione Secrets Sicuri
+
+Per garantire la sicurezza del tuo deployment, genera sempre secrets forti:
+
+```bash
+# Auth Secret (minimo 32 caratteri)
+openssl rand -base64 32
+
+# Database Password (minimo 16 caratteri)  
+openssl rand -base64 16
+
+# Password generiche per altri servizi
+openssl rand -hex 20
+```
+
+**❌ NON usare mai:**
+- Password semplici tipo "password123"
+- Valori placeholder tipo "change_me" o "your-secret-here"
+- Secrets copiati da esempi online
+- Stessa password per più servizi
+
+**✅ SEMPRE:**
+- Genera secrets unici per ogni deployment
+- Usa almeno 32 caratteri per AUTH_SECRET
+- Usa almeno 16 caratteri per POSTGRES_PASSWORD
+- Valida con `./scripts/validate-env.sh` prima di avviare
 
 ---
 
@@ -369,12 +438,20 @@ az webapp create \
 
 ### Variabili d'Ambiente per Produzione
 
-**OBBLIGATORIE:**
+> **⚠️ SICUREZZA CRITICA:** Tutte le variabili obbligatorie devono essere configurate con valori forti. Il deployment fallirà se mancano o contengono placeholder.
+
+**OBBLIGATORIE (il deployment fallisce se mancanti):**
 ```env
 DATABASE_URL="postgresql://user:password@host:5432/smartwaste"
-AUTH_SECRET="<openssl rand -base64 32>"
+AUTH_SECRET="<openssl rand -base64 32>"          # MINIMO 32 caratteri
+POSTGRES_PASSWORD="<openssl rand -base64 16>"   # MINIMO 16 caratteri
 AUTH_URL="https://your-domain.com"
 NODE_ENV="production"
+```
+
+**RACCOMANDATE:**
+```env
+NEXT_TELEMETRY_DISABLED=1
 ```
 
 **OPZIONALI:**
@@ -393,6 +470,10 @@ EMAIL_FROM="noreply@smartwaste.app"
 ---
 
 ## 🔐 Credenziali Demo
+
+> **⚠️ SOLO PER AMBIENTE DI SVILUPPO/DEMO**  
+> Questi account sono creati automaticamente dallo script di seed per facilitare il testing.  
+> **IN PRODUZIONE**: Cambia tutte le password o rimuovi questi account prima del deployment pubblico!
 
 Per testare l'applicazione, usa questi account pre-configurati:
 
@@ -417,7 +498,14 @@ Password: Demo123!
 Ruolo: Cittadino (visualizzazione e segnalazioni)
 ```
 
-**Nota:** Questi account sono creati automaticamente dal seed script. In produzione, cambiali o rimuovili!
+**⚠️ Nota di Sicurezza:**  
+Questi account sono creati automaticamente dal seed script (`prisma/seed.ts`) con password hard-coded.  
+Sono pensati **SOLO** per ambiente di sviluppo locale e demo.  
+
+**Prima del deployment in produzione:**
+- Modifica le password di questi account
+- Oppure rimuovi completamente gli account demo dal seed script
+- Crea account amministratore con password forte tramite interfaccia di registrazione
 
 ---
 

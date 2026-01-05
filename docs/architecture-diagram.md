@@ -6,6 +6,8 @@ This document describes the cloud-native architecture of the SmartWaste applicat
 
 ## High-Level Architecture
 
+> **💡 Visualizzazione Diagramma:** Per una visualizzazione ottimale, consulta l'immagine esportata: [architecture-overview.svg](./images/architecture-overview.svg)
+
 ```mermaid
 graph TB
     User[👤 Utente/Citizen] -->|HTTPS| LB[Load Balancer / CDN]
@@ -101,6 +103,9 @@ GET    /api/health               - Health check endpoint
 ```
 
 **Authentication Flow:**
+
+> **💡 Visualizzazione Diagramma:** [authentication-flow.svg](./images/authentication-flow.svg)
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -258,6 +263,8 @@ sequenceDiagram
 
 ### Multi-Layer Security
 
+> **💡 Visualizzazione Diagramma:** [security-architecture.svg](./images/security-architecture.svg)
+
 ```mermaid
 graph TD
     A[Client Request] --> B{HTTPS Layer}
@@ -312,6 +319,8 @@ graph TD
 ## Scalability & Performance
 
 ### Horizontal Scaling Strategy
+
+> **💡 Visualizzazione Diagramma:** [scaling-strategy.svg](./images/scaling-strategy.svg)
 
 ```mermaid
 graph LR

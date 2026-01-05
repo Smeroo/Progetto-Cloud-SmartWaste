@@ -16,6 +16,22 @@ async function main() {
 
   console.log("✅ Database pulito");
 
+  // =============================================================================
+  // ATTENZIONE: Password Hard-coded per Account Demo
+  // =============================================================================
+  // Le password qui sotto sono hard-coded SOLO per ambiente di sviluppo/demo.
+  // Questi account facilitano il testing immediato dell'applicazione.
+  // 
+  // ⚠️ SICUREZZA - IMPORTANTE PER PRODUZIONE:
+  // - Questi account con password note NON sono sicuri per produzione
+  // - Prima del deployment pubblico, RIMUOVI questi account demo oppure
+  //   CAMBIA le loro password con valori forti e unici
+  // - In produzione, gli account dovrebbero essere creati tramite
+  //   l'interfaccia di registrazione con password scelte dall'utente
+  // 
+  // Password demo utilizzata: "Password123!" e "Demo123!"
+  // =============================================================================
+
   // Crea utenti normali
   const hashedPassword = await bcrypt.hash("Password123!", 10);
 
@@ -69,6 +85,18 @@ async function main() {
   });
 
   console.log("✅ Operatore creato");
+
+  // =============================================================================
+  // Account Demo per Testing (SOLO SVILUPPO)
+  // =============================================================================
+  // I seguenti account usano password hard-coded per facilitare il testing:
+  // - admin@smartwaste.demo / Demo123!
+  // - user@smartwaste.demo / Demo123!
+  // - operator@smartwaste.demo / Demo123!
+  //
+  // ⚠️ QUESTI ACCOUNT SONO INSICURI PER PRODUZIONE!
+  // Prima del deployment pubblico, rimuovi o modifica questi account.
+  // =============================================================================
 
   // Crea admin demo
   const adminUser = await prisma.user.create({
@@ -372,10 +400,11 @@ async function main() {
   console.log("👤 User 1: mario.rossi@example.com / Password123!");
   console.log("👤 User 2: giulia.verdi@example.com / Password123!");
   console.log("👨‍💼 Operator: operatore@smartwaste.it / Password123!");
-  console.log("\n🎯 Account DEMO per testing:");
+  console.log("\n🎯 Account DEMO per testing (SOLO SVILUPPO - vedi commenti nel seed):");
   console.log("👑 Admin: admin@smartwaste.demo / Demo123!");
   console.log("👤 User: user@smartwaste.demo / Demo123!");
   console.log("👨‍💼 Operator: operator@smartwaste.demo / Demo123!");
+  console.log("\n⚠️  IMPORTANTE: In produzione, cambia o rimuovi gli account demo!");
 }
 
 main()
