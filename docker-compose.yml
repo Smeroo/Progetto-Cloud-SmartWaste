@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: smartwaste
       POSTGRES_USER: smartwaste_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smartwaste_pass_change_me}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required - set it in .env file}
     volumes:
       # Use named Docker volume for data persistence (NOT bind mount)
       - postgres_data:/var/lib/postgresql/data
@@ -46,10 +46,10 @@ services:
         condition: service_healthy
     environment:
       # Database connection (PostgreSQL)
-      DATABASE_URL: postgresql://smartwaste_user:${POSTGRES_PASSWORD:-smartwaste_pass_change_me}@database:5432/smartwaste?schema=public
+      DATABASE_URL: postgresql://smartwaste_user:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@database:5432/smartwaste?schema=public
       
       # Auth.js configuration
-      AUTH_SECRET: ${AUTH_SECRET:-please-generate-a-secure-secret-key}
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET is required - generate with: openssl rand -base64 32}
       AUTH_URL: ${AUTH_URL:-http://localhost:3000}
       
       # OAuth Providers (optional)

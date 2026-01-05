@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- Border -->
+  <rect x="10" y="10" width="780" height="580" fill="none" stroke="#dee2e6" stroke-width="2" rx="10"/>
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#212529">
+    SmartWaste - Deployment AWS
+  </text>
+  
+  <!-- Icon/Visual -->
+  <circle cx="400" cy="250" r="100" fill="#0070f3" opacity="0.1"/>
+  <circle cx="400" cy="250" r="70" fill="#0070f3" opacity="0.2"/>
+  <circle cx="400" cy="250" r="40" fill="#0070f3" opacity="0.3"/>
+  
+  <!-- Description -->
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#495057">
+    Architettura deployment su Amazon Web Services
+  </text>
+  
+  <!-- Note -->
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#6c757d">
+    Per visualizzare il diagramma interattivo, consulta il file markdown
+  </text>
+  
+  <!-- File reference -->
+  <text x="400" y="480" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6c757d" font-style="italic">
+    Definizione completa nel file .md corrispondente
+  </text>
+  
+  <!-- Mermaid logo indicator -->
+  <text x="400" y="550" font-family="monospace" font-size="12" text-anchor="middle" fill="#9e9e9e">
+    🧜‍♀️ Mermaid Diagram
+  </text>
+</svg>
