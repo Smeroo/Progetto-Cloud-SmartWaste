@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "CollectionPoint" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "operatorId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -8,39 +8,43 @@ CREATE TABLE "CollectionPoint" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "accessibility" TEXT,
     "capacity" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "CollectionPoint_operatorId_fkey" FOREIGN KEY ("operatorId") REFERENCES "Operator" ("userId") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "CollectionPoint_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Address" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "street" TEXT NOT NULL,
     "number" TEXT,
     "city" TEXT NOT NULL,
     "zip" TEXT NOT NULL,
     "country" TEXT NOT NULL DEFAULT 'Italy',
-    "latitude" REAL NOT NULL,
-    "longitude" REAL NOT NULL,
+    "latitude" DOUBLE PRECISION NOT NULL,
+    "longitude" DOUBLE PRECISION NOT NULL,
     "collectionPointId" INTEGER NOT NULL,
-    CONSTRAINT "Address_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "Address_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "WasteType" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "color" TEXT NOT NULL,
     "iconName" TEXT,
     "disposalInfo" TEXT NOT NULL DEFAULT '',
-    "examples" TEXT
+    "examples" TEXT,
+
+    CONSTRAINT "WasteType_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CollectionSchedule" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "collectionPointId" INTEGER NOT NULL,
     "monday" BOOLEAN NOT NULL DEFAULT false,
     "tuesday" BOOLEAN NOT NULL DEFAULT false,
@@ -53,55 +57,59 @@ CREATE TABLE "CollectionSchedule" (
     "closingTime" TEXT,
     "notes" TEXT,
     "isAlwaysOpen" BOOLEAN NOT NULL DEFAULT false,
-    CONSTRAINT "CollectionSchedule_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "CollectionSchedule_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Report" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "userId" TEXT NOT NULL,
     "collectionPointId" INTEGER NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "images" JSONB,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "resolvedAt" DATETIME,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "resolvedAt" TIMESTAMP(3),
     "resolvedBy" TEXT,
     "resolutionNotes" TEXT,
-    CONSTRAINT "Report_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Report_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "Report_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "role" TEXT NOT NULL,
     "password" TEXT,
     "resetToken" TEXT,
-    "resetTokenExpiry" DATETIME,
+    "resetTokenExpiry" TIMESTAMP(3),
     "oauthProvider" TEXT NOT NULL,
     "oauthId" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT NOT NULL,
     "surname" TEXT,
-    "cellphone" TEXT
+    "cellphone" TEXT,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Operator" (
-    "userId" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
     "organizationName" TEXT NOT NULL,
     "vatNumber" TEXT,
     "telephone" TEXT NOT NULL,
     "website" TEXT,
-    CONSTRAINT "Operator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "Operator_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
 CREATE TABLE "Account" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
@@ -113,35 +121,35 @@ CREATE TABLE "Account" (
     "scope" TEXT,
     "id_token" TEXT,
     "session_state" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Session" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "sessionToken" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "expires" DATETIME NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "expires" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
-    "expires" DATETIME NOT NULL
+    "expires" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "_CollectionPointToWasteType" (
     "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
-    CONSTRAINT "_CollectionPointToWasteType_A_fkey" FOREIGN KEY ("A") REFERENCES "CollectionPoint" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_CollectionPointToWasteType_B_fkey" FOREIGN KEY ("B") REFERENCES "WasteType" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "B" INTEGER NOT NULL
 );
 
 -- CreateIndex
@@ -170,3 +178,34 @@ CREATE UNIQUE INDEX "_CollectionPointToWasteType_AB_unique" ON "_CollectionPoint
 
 -- CreateIndex
 CREATE INDEX "_CollectionPointToWasteType_B_index" ON "_CollectionPointToWasteType"("B");
+
+-- AddForeignKey
+ALTER TABLE "CollectionPoint" ADD CONSTRAINT "CollectionPoint_operatorId_fkey" FOREIGN KEY ("operatorId") REFERENCES "Operator"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Address" ADD CONSTRAINT "Address_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectionSchedule" ADD CONSTRAINT "CollectionSchedule_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Report" ADD CONSTRAINT "Report_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Report" ADD CONSTRAINT "Report_collectionPointId_fkey" FOREIGN KEY ("collectionPointId") REFERENCES "CollectionPoint"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Operator" ADD CONSTRAINT "Operator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_CollectionPointToWasteType" ADD CONSTRAINT "_CollectionPointToWasteType_A_fkey" FOREIGN KEY ("A") REFERENCES "CollectionPoint"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_CollectionPointToWasteType" ADD CONSTRAINT "_CollectionPointToWasteType_B_fkey" FOREIGN KEY ("B") REFERENCES "WasteType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
