@@ -184,7 +184,7 @@ const WasteGuidePage = () => {
           Guida alla <span className="text-emerald-500">Raccolta Differenziata</span>
         </h1>
         <p className="text-xl text-stone-600 max-w-3xl mx-auto">
-          Impara a differenziare correttamente e contribuisci alla salvaguardia dell'ambiente
+          Impara a differenziare correttamente e contribuisci alla salvaguardia dell&apos;ambiente
         </p>
       </div>
 
@@ -318,7 +318,7 @@ const WasteGuidePage = () => {
         <div className="bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl p-8 text-white">
           <h3 className="text-2xl font-bold mb-3">🌍 Perché differenziare?</h3>
           <p className="text-lg mb-4">
-            La raccolta differenziata riduce l'inquinamento, risparmia risorse naturali e protegge il nostro pianeta per le generazioni future.
+            La raccolta differenziata riduce l&apos;inquinamento, risparmia risorse naturali e protegge il nostro pianeta per le generazioni future.
           </p>
           <div className="grid grid-cols-3 gap-4 mt-6">
             <div>

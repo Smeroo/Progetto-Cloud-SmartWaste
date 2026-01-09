@@ -165,7 +165,7 @@ const ReviewCarousel = () => {
                             <div className='flex flex-col gap-3 sm:gap-5 md:gap-8 lg:gap-10'>
                                 <div>
                                     {renderStars(review.rating)}
-                                    <p className="text-xs sm:text-sm md:text-base lg:text-lg italic mb-2 sm:mb-4 md:mb-6">"{review.text}"</p>
+                                    <p className="text-xs sm:text-sm md:text-base lg:text-lg italic mb-2 sm:mb-4 md:mb-6">&quot;{review.text}&quot;</p>
                                 </div>
                                 <div className="flex justify-end">
                                     <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">- {review.name}</h2>
