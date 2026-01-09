@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Handles DELETE request to /api/visits/[id]
 // Deletes a visit by ID
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         // Check if the user is authenticated
         const session = await auth();
