@@ -87,7 +87,7 @@ Questo singolo comando esegue automaticamente tutto:
 
 Una volta che nel terminale compare il messaggio `Starting application...`, apri il browser su:
 
-👉 **[http://localhost:3000](http://localhost:3000)**
+**[http://localhost:3000](http://localhost:3000)**
 
 ## Credenziali di Prova
 
